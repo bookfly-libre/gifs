@@ -2,64 +2,72 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<title>Beni-IA | Centro de Creación Visual</title>
+<title>Beni-IA</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-
-<link
-href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
-rel="stylesheet">
 
 <style>
 
 body{
-    font-family:'Inter',sans-serif;
-    background:#020617;
+font-family:Inter,sans-serif;
+background:#020617;
+color:white;
 }
 
 .glass-panel{
-    background:rgba(255,255,255,.03);
-    backdrop-filter:blur(14px);
-    border:1px solid rgba(255,255,255,.06);
+background:rgba(255,255,255,.04);
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,.06);
 }
 
 .loader{
-    border-top-color:#8b5cf6;
-    animation:spin 1s linear infinite;
+border-top-color:#8b5cf6;
+animation:spin 1s linear infinite;
 }
 
 @keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
+to{
+transform:rotate(360deg);
+}
+}
+
+.generated-gif{
+animation:gifMove 1.4s infinite ease-in-out alternate;
+transform-origin:center;
+}
+
+@keyframes gifMove{
+
+0%{
+transform:translateX(-18px) rotate(-1deg);
+}
+
+100%{
+transform:translateX(18px) rotate(1deg);
+}
+
 }
 
 </style>
 </head>
 
-<body class="text-white min-h-screen">
+<body>
 
-<nav class="p-6 flex justify-between items-center border-b border-slate-800">
+<nav class="p-6 flex justify-between border-b border-slate-800">
 
-<h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+<h1 class="text-3xl font-bold text-purple-400">
 BENI-IA
 </h1>
 
 <div class="space-x-8">
 
-<button onclick="switchTab('image')" class="hover:text-blue-400">
-Imágenes
-</button>
+<button onclick="switchTab('image')">Imágenes</button>
 
-<button onclick="switchTab('video')" class="hover:text-blue-400">
-Videos
-</button>
+<button onclick="switchTab('video')">Videos</button>
 
-<button onclick="switchTab('gif')" class="hover:text-blue-400">
-GIFs
-</button>
+<button onclick="switchTab('gif')">GIFs</button>
 
 </div>
 
@@ -67,25 +75,25 @@ GIFs
 
 
 
-<main class="max-w-4xl mx-auto p-8 space-y-8">
+<main class="max-w-5xl mx-auto p-8 space-y-8">
 
 <!-- IMÁGENES -->
-<section id="image-tab" class="space-y-8">
+<section id="image-tab">
 
-<div class="glass-panel p-8 rounded-3xl">
+<div class="glass-panel rounded-3xl p-8">
 
-<h2 class="text-3xl font-semibold mb-5">
+<h2 class="text-3xl mb-4">
 Generador de Imágenes
 </h2>
 
 <textarea
 id="img-prompt"
-class="w-full h-36 p-5 bg-slate-900 rounded-xl border border-slate-700"
-placeholder="Describe la imagen que deseas crear..."></textarea>
+class="w-full p-5 rounded-xl bg-slate-900"
+placeholder="Describe la imagen"></textarea>
 
 <button
 onclick="generateImage()"
-class="mt-5 w-full bg-purple-600 hover:bg-purple-700 py-4 rounded-xl font-bold">
+class="mt-5 w-full py-4 rounded-xl bg-purple-600">
 Generar Imagen
 </button>
 
@@ -93,7 +101,7 @@ Generar Imagen
 
 <div
 id="image-result"
-class="glass-panel rounded-3xl hidden min-h-[320px] p-6">
+class="hidden glass-panel rounded-3xl mt-8 p-8">
 </div>
 
 </section>
@@ -101,29 +109,29 @@ class="glass-panel rounded-3xl hidden min-h-[320px] p-6">
 
 
 <!-- VIDEO -->
-<section id="video-tab" class="hidden space-y-8">
+<section id="video-tab" class="hidden">
 
-<div class="glass-panel p-8 rounded-3xl">
+<div class="glass-panel rounded-3xl p-8">
 
-<h2 class="text-3xl font-semibold mb-5">
-Transformación a Video
+<h2 class="text-3xl mb-4">
+Crear Video
 </h2>
 
 <input
-type="file"
 id="video-upload"
+type="file"
 accept="image/*"
-class="w-full p-4 bg-slate-900 rounded-xl mb-5">
+class="w-full mb-4">
 
 <input
-type="text"
 id="video-prompt"
-class="w-full p-4 bg-slate-900 rounded-xl border border-slate-700 mb-5"
-placeholder="¿Qué acción debe realizar el video?">
+type="text"
+placeholder="Describe el movimiento"
+class="w-full p-4 rounded-xl bg-slate-900 mb-4">
 
 <button
 onclick="processVideo()"
-class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-bold">
+class="w-full py-4 rounded-xl bg-blue-600">
 Crear Video
 </button>
 
@@ -131,7 +139,7 @@ Crear Video
 
 <div
 id="video-result"
-class="glass-panel rounded-3xl hidden min-h-[320px] p-6">
+class="hidden glass-panel rounded-3xl mt-8 p-8">
 </div>
 
 </section>
@@ -139,28 +147,28 @@ class="glass-panel rounded-3xl hidden min-h-[320px] p-6">
 
 
 <!-- GIF -->
-<section id="gif-tab" class="hidden space-y-8">
+<section id="gif-tab" class="hidden">
 
-<div class="glass-panel p-8 rounded-3xl">
+<div class="glass-panel rounded-3xl p-8">
 
-<h2 class="text-3xl font-semibold mb-5">
+<h2 class="text-3xl mb-4">
 Creador de GIFs
 </h2>
 
 <input
-type="file"
 id="gif-upload"
+type="file"
 accept="image/*"
-class="w-full p-4 bg-slate-900 rounded-xl mb-5">
+class="w-full mb-4">
 
 <textarea
 id="gif-prompt"
-class="w-full h-28 p-5 bg-slate-900 rounded-xl border border-slate-700 mb-5"
-placeholder="Describe el movimiento o efecto para el GIF..."></textarea>
+class="w-full p-4 rounded-xl bg-slate-900 mb-4"
+placeholder="Describe el movimiento"></textarea>
 
 <button
 onclick="processGif()"
-class="w-full bg-emerald-600 hover:bg-emerald-700 py-4 rounded-xl font-bold">
+class="w-full py-4 rounded-xl bg-emerald-600">
 Crear GIF
 </button>
 
@@ -168,7 +176,7 @@ Crear GIF
 
 <div
 id="gif-result"
-class="glass-panel rounded-3xl hidden min-h-[320px] p-6">
+class="hidden glass-panel rounded-3xl mt-8 p-8">
 </div>
 
 </section>
@@ -177,18 +185,17 @@ class="glass-panel rounded-3xl hidden min-h-[320px] p-6">
 
 
 
+
 <script>
 
-function switchTab(tabName){
+function switchTab(tab){
 
-document
-.querySelectorAll("main > section")
+document.querySelectorAll("main section")
 .forEach(section=>{
 section.classList.add("hidden");
 });
 
-document
-.getElementById(tabName + "-tab")
+document.getElementById(tab+"-tab")
 .classList.remove("hidden");
 
 }
@@ -203,17 +210,11 @@ container.classList.remove("hidden");
 
 container.innerHTML=`
 
-<div class="flex flex-col items-center justify-center min-h-[280px] gap-5">
+<div class="flex flex-col items-center gap-5 min-h-[250px] justify-center">
 
 <div class="loader w-12 h-12 border-4 border-slate-700 rounded-full"></div>
 
-<p class="text-xl font-semibold">
-Procesando...
-</p>
-
-<p class="text-slate-400">
-La IA está generando tu contenido
-</p>
+<p>Procesando...</p>
 
 </div>
 
@@ -231,35 +232,19 @@ async function generateImage(){
 
 const prompt=document.getElementById("img-prompt").value.trim();
 
-if(!prompt) return;
+if(!prompt)return;
 
 const container=showProcessing("image-result");
-
-try{
 
 await new Promise(resolve=>setTimeout(resolve,2500));
 
 container.innerHTML=`
 
-<div class="flex justify-center">
-
 <img
-src="https://picsum.photos/1280/720?random=${Date.now()}"
-class="rounded-2xl max-w-full shadow-xl">
-
-</div>
+src="https://picsum.photos/1200/700?random=${Date.now()}"
+class="rounded-2xl mx-auto">
 
 `;
-
-}catch(error){
-
-container.innerHTML=`
-<p class="text-red-400">
-Error al generar la imagen
-</p>
-`;
-
-}
 
 }
 
@@ -269,49 +254,27 @@ Error al generar la imagen
 
 async function processVideo(){
 
-const fileInput=document.getElementById("video-upload");
+const file=document.getElementById("video-upload").files[0];
 
-const prompt=document.getElementById("video-prompt").value.trim();
-
-if(!fileInput.files.length || !prompt){
-return;
-}
-
-const file=fileInput.files[0];
+if(!file)return;
 
 const container=showProcessing("video-result");
 
-try{
+await new Promise(resolve=>setTimeout(resolve,2500));
 
-await new Promise(resolve=>setTimeout(resolve,3000));
-
-const fileURL=URL.createObjectURL(file);
+const url=URL.createObjectURL(file);
 
 container.innerHTML=`
-
-<div class="flex flex-col items-center gap-5">
 
 <img
-src="${fileURL}"
-class="rounded-2xl max-w-full max-h-[500px] object-contain shadow-xl">
+src="${url}"
+class="generated-gif rounded-2xl max-h-[500px] mx-auto">
 
-<p class="text-blue-400 font-semibold">
-Vista previa del video generada correctamente
+<p class="text-center text-blue-400 mt-4">
+Video generado correctamente
 </p>
 
-</div>
-
 `;
-
-}catch(error){
-
-container.innerHTML=`
-<p class="text-red-400">
-Error al crear el video
-</p>
-`;
-
-}
 
 }
 
@@ -321,49 +284,31 @@ Error al crear el video
 
 async function processGif(){
 
-const fileInput=document.getElementById("gif-upload");
+const file=document.getElementById("gif-upload").files[0];
 
-const prompt=document.getElementById("gif-prompt").value.trim();
-
-if(!fileInput.files.length || !prompt){
-return;
-}
-
-const file=fileInput.files[0];
+if(!file)return;
 
 const container=showProcessing("gif-result");
 
-try{
-
 await new Promise(resolve=>setTimeout(resolve,2500));
 
-const fileURL=URL.createObjectURL(file);
+const url=URL.createObjectURL(file);
 
 container.innerHTML=`
 
-<div class="flex flex-col items-center gap-5">
+<div class="flex flex-col items-center gap-6">
 
 <img
-src="${fileURL}"
-class="rounded-2xl max-w-full max-h-[500px] object-contain shadow-xl">
+src="${url}"
+class="generated-gif rounded-2xl max-h-[500px] mx-auto">
 
-<p class="text-emerald-400 font-semibold">
+<p class="text-emerald-400 text-lg">
 GIF generado correctamente
 </p>
 
 </div>
 
 `;
-
-}catch(error){
-
-container.innerHTML=`
-<p class="text-red-400">
-Error al crear el GIF
-</p>
-`;
-
-}
 
 }
 
