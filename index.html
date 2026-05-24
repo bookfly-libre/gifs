@@ -272,13 +272,10 @@ async function processGif() {
       );
 
     const prediction =
-      await predictionResponse.json();
-      console.log("prediction:", prediction);
+    await predictionResponse.json();
 
-    const prediction =
-      await predictionResponse.json();
-      console.log("prediction:", prediction);
-    
+    console.log("prediction:", prediction);
+
     let resultUrl = null;
 
     while (!resultUrl) {
