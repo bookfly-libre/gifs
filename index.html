@@ -273,7 +273,12 @@ async function processGif() {
 
     const prediction =
       await predictionResponse.json();
+      console.log("prediction:", prediction);
 
+    const prediction =
+      await predictionResponse.json();
+      console.log("prediction:", prediction);
+    
     let resultUrl = null;
 
     while (!resultUrl) {
@@ -321,14 +326,13 @@ async function processGif() {
     `;
 
   } catch (error) {
-    console.error(error);
+  console.error(error);
 
-    container.innerHTML = `
-      <p class="text-red-400 text-center">
-        Error al generar el GIF
-      </p>
-    `;
-  }
+  container.innerHTML = `
+    <p class="text-red-400 text-center">
+      Error al generar el GIF: ${error.message}
+    </p>
+  `;
 }
 </script>
   <script>
