@@ -28,9 +28,44 @@
       transform-origin: center;
     }
     @keyframes gifMove {
-      0% { transform: translateX(-18px) rotate(-1deg); }
-      100% { transform: translateX(18px) rotate(1deg); }
-    }
+      0% {
+    transform: translateX(-40px);
+  }
+
+  100% {
+    transform: translateX(40px);
+  }
+}
+
+@keyframes handWave {
+  0% {
+    transform: rotate(-12deg);
+  }
+
+  100% {
+    transform: rotate(12deg);
+  }
+}
+
+@keyframes upDown {
+  0% {
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(20px);
+  }
+}
+
+@keyframes spinSlow {
+  0% {
+    transform: rotate(-8deg);
+  }
+
+  100% {
+    transform: rotate(8deg);
+  }
+}
   </style>
 </head>
 <body>
@@ -83,93 +118,178 @@
 
   </main>
 
-  <script>
-    // Cambiar de pestañas y ocultar los resultados anteriores para evitar ruido visual
-    function switchTab(tab) {
-      document.querySelectorAll("main section").forEach(section => {
-        section.classList.add("hidden");
-      });
-      document.getElementById(tab + "-tab").classList.remove("hidden");
-    }
+<script>
+  function switchTab(tab) {
+    document.querySelectorAll("main section").forEach(section => {
+      section.classList.add("hidden");
+    });
 
-    // Muestra la animación de carga
-    function showProcessing(containerId) {
-      const container = document.getElementById(containerId);
-      container.classList.remove("hidden");
-      container.innerHTML = `
-        <div class="flex flex-col items-center gap-5 min-h-[250px] justify-center">
-          <div class="loader w-12 h-12 border-4 border-slate-700 rounded-full"></div>
-          <p class="text-slate-400 animate-pulse">Procesando simulación de IA...</p>
-        </div>
-      `;
-      return container;
-    }
+    document.getElementById(tab + "-tab").classList.remove("hidden");
+  }
 
-    /* IMAGEN */
-    async function generateImage() {
-      const prompt = document.getElementById("img-prompt").value.trim();
-      if (!prompt) {
-        alert("Por favor, escribe una descripción para la imagen.");
-        return;
-      }
+  function showProcessing(containerId) {
+    const container = document.getElementById(containerId);
 
-      const container = showProcessing("image-result");
-      await new Promise(resolve => setTimeout(resolve, 2500));
+    container.classList.remove("hidden");
 
-      container.innerHTML = `
-        <img src="https://picsum.photos/1200/700?random=${Date.now()}" class="rounded-2xl mx-auto shadow-2xl">
-        <p class="text-center text-purple-400 mt-4 italic">"${prompt}"</p>
-      `;
-    }
-
-    /* VIDEO */
-    async function processVideo() {
-      const file = document.getElementById("video-upload").files[0];
-      const prompt = document.getElementById("video-prompt").value.trim();
-
-      if (!file || !prompt) {
-        alert("Por favor, selecciona una imagen y describe el movimiento del video.");
-        return;
-      }
-
-      const container = showProcessing("video-result");
-      await new Promise(resolve => setTimeout(resolve, 2500));
-
-      const url = URL.createObjectURL(file);
-      container.innerHTML = `
-        <img src="${url}" class="generated-gif rounded-2xl max-h-[500px] mx-auto shadow-2xl">
-        <p class="text-center text-blue-400 mt-4 font-medium">
-          Video generado correctamente
+    container.innerHTML = `
+      <div class="flex flex-col items-center gap-5 min-h-[250px] justify-center">
+        <div class="loader w-12 h-12 border-4 border-slate-700 rounded-full"></div>
+        <p class="text-slate-400 animate-pulse">
+          Procesando simulación de IA...
         </p>
-        <p class="text-center text-slate-400 text-sm italic">Efecto: ${prompt}</p>
-      `;
+      </div>
+    `;
+
+    return container;
+  }
+
+  function getAnimationFromPrompt(prompt) {
+    const p = prompt.toLowerCase();
+
+    if (
+      p.includes("caminar") ||
+      p.includes("walk")
+    ) {
+      return "walkAnimation";
     }
 
-    /* GIF */
-    async function processGif() {
-      const file = document.getElementById("gif-upload").files[0];
-      const prompt = document.getElementById("gif-prompt").value.trim();
-
-      // Validación preventiva: Si falta el archivo o el texto, avisa al usuario en vez de fallar en silencio
-      if (!file || !prompt) {
-        alert("Por favor, selecciona una imagen y describe el movimiento para el GIF.");
-        return;
-      }
-
-      const container = showProcessing("gif-result");
-      await new Promise(resolve => setTimeout(resolve, 2500));
-
-      const url = URL.createObjectURL(file);
-      container.innerHTML = `
-        <div class="flex flex-col items-center gap-4">
-          <img src="${url}" class="generated-gif rounded-2xl max-h-[500px] mx-auto shadow-2xl">
-          <p class="text-emerald-400 text-lg font-medium">
-            GIF generado correctamente
-          </p>
-          <p class="text-slate-400 text-sm italic">Animación basada en: "${prompt}"</p>
-        </div>
-      `;
+    if (
+      p.includes("mano") ||
+      p.includes("saludar") ||
+      p.includes("wave")
+    ) {
+      return "handWave";
     }
-  </script>
+
+    if (
+      p.includes("subir") ||
+      p.includes("bajar")
+    ) {
+      return "upDown";
+    }
+
+    if (
+      p.includes("girar") ||
+      p.includes("rotar")
+    ) {
+      return "spinSlow";
+    }
+
+    return "gifMove";
+  }
+
+  async function generateImage() {
+    const prompt =
+      document.getElementById("img-prompt").value.trim();
+
+    if (!prompt) {
+      alert("Por favor, escribe una descripción.");
+      return;
+    }
+
+    const container = showProcessing("image-result");
+
+    await new Promise(resolve =>
+      setTimeout(resolve, 2500)
+    );
+
+    container.innerHTML = `
+      <img
+        src="https://picsum.photos/1200/700?random=${Date.now()}"
+        class="rounded-2xl mx-auto shadow-2xl"
+      >
+
+      <p class="text-center text-purple-400 mt-4 italic">
+        "${prompt}"
+      </p>
+    `;
+  }
+
+  async function processVideo() {
+    const file =
+      document.getElementById("video-upload").files[0];
+
+    const prompt =
+      document.getElementById("video-prompt").value.trim();
+
+    if (!file || !prompt) {
+      alert("Selecciona una imagen y describe el movimiento.");
+      return;
+    }
+
+    const container = showProcessing("video-result");
+
+    await new Promise(resolve =>
+      setTimeout(resolve, 2500)
+    );
+
+    const url = URL.createObjectURL(file);
+
+    const animation =
+      getAnimationFromPrompt(prompt);
+
+    container.innerHTML = `
+      <img
+        src="${url}"
+        class="rounded-2xl max-h-[500px] mx-auto shadow-2xl"
+        style="animation:${animation} 1.6s infinite alternate ease-in-out;"
+      >
+
+      <p class="text-center text-blue-400 mt-4 font-medium">
+        Video generado correctamente
+      </p>
+
+      <p class="text-center text-slate-400 text-sm italic">
+        Movimiento aplicado: "${prompt}"
+      </p>
+    `;
+  }
+
+  async function processGif() {
+    const file =
+      document.getElementById("gif-upload").files[0];
+
+    const prompt =
+      document.getElementById("gif-prompt").value.trim();
+
+    if (!file || !prompt) {
+      alert("Selecciona una imagen y describe el movimiento.");
+      return;
+    }
+
+    const container = showProcessing("gif-result");
+
+    await new Promise(resolve =>
+      setTimeout(resolve, 2500)
+    );
+
+    const url = URL.createObjectURL(file);
+
+    const animation =
+      getAnimationFromPrompt(prompt);
+
+    container.innerHTML = `
+      <div class="flex flex-col items-center gap-4">
+
+        <img
+          src="${url}"
+          class="rounded-2xl max-h-[500px] mx-auto shadow-2xl"
+          style="animation:${animation} 1.4s infinite alternate ease-in-out;"
+        >
+
+        <p class="text-emerald-400 text-lg font-medium">
+          GIF generado correctamente
+        </p>
+
+        <p class="text-slate-400 text-sm italic">
+          Movimiento aplicado: "${prompt}"
+        </p>
+
+      </div>
+    `;
+  }
+</script>
+  
 </body>
 </html>
