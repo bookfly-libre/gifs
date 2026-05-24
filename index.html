@@ -117,138 +117,103 @@
     </section>
 
   </main>
-
 <script>
-
-  const REPLICATE_API_TOKEN =
+const REPLICATE_API_TOKEN =
   prompt("Pega tu Replicate API token");
-  
-  function switchTab(tab) {
-    document.querySelectorAll("main section").forEach(section => {
-      section.classList.add("hidden");
-    });
 
-    document.getElementById(tab + "-tab").classList.remove("hidden");
-  }
+function switchTab(tab) {
+  document.querySelectorAll("main section").forEach(section => {
+    section.classList.add("hidden");
+  });
 
-  function showProcessing(containerId) {
-    const container = document.getElementById(containerId);
+  document
+    .getElementById(tab + "-tab")
+    .classList.remove("hidden");
+}
 
-    container.classList.remove("hidden");
+function showProcessing(containerId) {
+  const container =
+    document.getElementById(containerId);
 
-    container.innerHTML = `
-      <div class="flex flex-col items-center gap-5 min-h-[250px] justify-center">
-        <div class="loader w-12 h-12 border-4 border-slate-700 rounded-full"></div>
-        <p class="text-slate-400 animate-pulse">
-          Procesando simulación de IA...
-        </p>
-      </div>
-    `;
+  container.classList.remove("hidden");
 
-    return container;
-  }
-
-  function getAnimationFromPrompt(prompt) {
-    const p = prompt.toLowerCase();
-
-    if (
-      p.includes("caminar") ||
-      p.includes("walk")
-    ) {
-      return "walkAnimation";
-    }
-
-    if (
-      p.includes("mano") ||
-      p.includes("saludar") ||
-      p.includes("wave")
-    ) {
-      return "handWave";
-    }
-
-    if (
-      p.includes("subir") ||
-      p.includes("bajar")
-    ) {
-      return "upDown";
-    }
-
-    if (
-      p.includes("girar") ||
-      p.includes("rotar")
-    ) {
-      return "spinSlow";
-    }
-
-    return "gifMove";
-  }
-
-  async function generateImage() {
-    const prompt =
-      document.getElementById("img-prompt").value.trim();
-
-    if (!prompt) {
-      alert("Por favor, escribe una descripción.");
-      return;
-    }
-
-    const container = showProcessing("image-result");
-
-    await new Promise(resolve =>
-      setTimeout(resolve, 2500)
-    );
-
-    container.innerHTML = `
-      <img
-        src="https://picsum.photos/1200/700?random=${Date.now()}"
-        class="rounded-2xl mx-auto shadow-2xl"
-      >
-
-      <p class="text-center text-purple-400 mt-4 italic">
-        "${prompt}"
+  container.innerHTML = `
+    <div class="flex flex-col items-center gap-5 min-h-[250px] justify-center">
+      <div class="loader w-12 h-12 border-4 border-slate-700 rounded-full"></div>
+      <p class="text-slate-400 animate-pulse">
+        Procesando IA...
       </p>
-    `;
+    </div>
+  `;
+
+  return container;
+}
+
+async function generateImage() {
+  const prompt =
+    document.getElementById("img-prompt").value.trim();
+
+  if (!prompt) {
+    alert("Por favor, escribe una descripción.");
+    return;
   }
 
-  async function processVideo() {
-    const file =
-      document.getElementById("video-upload").files[0];
+  const container =
+    showProcessing("image-result");
 
-    const prompt =
-      document.getElementById("video-prompt").value.trim();
+  await new Promise(resolve =>
+    setTimeout(resolve, 1500)
+  );
 
-    if (!file || !prompt) {
-      alert("Selecciona una imagen y describe el movimiento.");
-      return;
-    }
+  container.innerHTML = `
+    <img
+      src="https://picsum.photos/1200/700?random=${Date.now()}"
+      class="rounded-2xl mx-auto shadow-2xl"
+    >
+    <p class="text-center text-purple-400 mt-4 italic">
+      "${prompt}"
+    </p>
+  `;
+}
 
-    const container = showProcessing("video-result");
+async function processVideo() {
+  const file =
+    document.getElementById("video-upload").files[0];
 
-    await new Promise(resolve =>
-      setTimeout(resolve, 2500)
-    );
+  const prompt =
+    document.getElementById("video-prompt").value.trim();
 
-    const url = URL.createObjectURL(file);
-
-    const animation =
-      getAnimationFromPrompt(prompt);
-
-    container.innerHTML = `
-      <img
-        src="${url}"
-        class="rounded-2xl max-h-[500px] mx-auto shadow-2xl"
-        style="animation:${animation} 1.6s infinite alternate ease-in-out;"
-      >
-
-      <p class="text-center text-blue-400 mt-4 font-medium">
-        Video generado correctamente
-      </p>
-
-      <p class="text-center text-slate-400 text-sm italic">
-        Movimiento aplicado: "${prompt}"
-      </p>
-    `;
+  if (!file || !prompt) {
+    alert("Selecciona imagen y describe el movimiento.");
+    return;
   }
+
+  const container =
+    showProcessing("video-result");
+
+  const url =
+    URL.createObjectURL(file);
+
+  await new Promise(resolve =>
+    setTimeout(resolve, 1200)
+  );
+
+  container.innerHTML = `
+    <video
+      controls
+      autoplay
+      loop
+      muted
+      class="rounded-2xl mx-auto max-h-[500px]"
+    >
+      <source src="${url}">
+    </video>
+
+    <p class="text-center text-blue-400 mt-4">
+      "${prompt}"
+    </p>
+  `;
+}
 
 async function processGif() {
   const file =
@@ -268,25 +233,22 @@ async function processGif() {
   try {
     const formData = new FormData();
 
-formData.append("file", file);
+    formData.append("file", file);
 
-const uploadResponse =
-  await fetch(
-    "https://api.replicate.com/v1/files",
-    {
-      method: "POST",
+    const uploadResponse =
+      await fetch(
+        "https://api.replicate.com/v1/files",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${REPLICATE_API_TOKEN}`
+          },
+          body: formData
+        }
+      );
 
-      headers: {
-        Authorization:
-          `Token ${REPLICATE_API_TOKEN}`
-      },
-
-      body: formData
-    }
-  );
-
-const uploadData =
-  await uploadResponse.json();
+    const uploadData =
+      await uploadResponse.json();
 
     const predictionResponse =
       await fetch(
@@ -296,12 +258,11 @@ const uploadData =
 
           headers: {
             Authorization: `Token ${REPLICATE_API_TOKEN}`,
-
-            "Content-Type":"application/json"
+            "Content-Type": "application/json"
           },
 
           body: JSON.stringify({
-            version:"minimax/video-01-live",
+            version: "minimax/video-01-live",
 
             input: {
               prompt: prompt,
@@ -311,82 +272,36 @@ const uploadData =
         }
       );
 
-  
     const prediction =
       await predictionResponse.json();
 
     let resultUrl = null;
 
     while (!resultUrl) {
-
       await new Promise(resolve =>
         setTimeout(resolve, 3000)
       );
 
-     const poll = await fetch(
-        `https://api.replicate.com/v1/predictions/${prediction.id}`,
-    {
-      headers: {
-      Authorization: `Token ${REPLICATE_API_TOKEN}`
-    }
-  }
-);
-
-      const data = await poll.json();
-
-      if (data.status === "succeeded") {
-      resultUrl = data.output?.[0];
-      }
-
-if (data.status === "failed") {
-  throw new Error("Falló la generación");
-}
-}
-
-container.innerHTML = `
-  <video
-    autoplay
-    loop
-    muted
-    controls
-    class="rounded-2xl mx-auto max-h-[600px]"
-  >
-    <source src="${resultUrl}" type="video/mp4">
-  </video>
-
-  <p class="text-emerald-400 text-center mt-4">
-    GIF generado correctamente
-  </p>
-`;
-
-} catch (error) {
-
-console.error(error);
-
-container.innerHTML = `
-  <p class="text-red-400 text-center">
-    Error al generar el GIF
-  </p>
-`;
-}
-}
+      const poll =
+        await fetch(
+          `https://api.replicate.com/v1/predictions/${prediction.id}`,
+          {
+            headers: {
+              Authorization: `Token ${REPLICATE_API_TOKEN}`
+            }
+          }
+        );
 
       const data =
         await poll.json();
 
-      if (
-        data.status === "succeeded"
-      ) {
+      if (data.status === "succeeded") {
         resultUrl =
           data.output?.[0];
       }
 
-      if (
-        data.status === "failed"
-      ) {
-        throw new Error(
-          "Falló la generación"
-        );
+      if (data.status === "failed") {
+        throw new Error("Falló la generación");
       }
     }
 
@@ -400,12 +315,13 @@ container.innerHTML = `
       >
         <source src="${resultUrl}" type="video/mp4">
       </video>
+
+      <p class="text-emerald-400 text-center mt-4">
+        GIF generado correctamente
+      </p>
     `;
 
-  }
-
-  catch (error) {
-
+  } catch (error) {
     console.error(error);
 
     container.innerHTML = `
@@ -415,40 +331,9 @@ container.innerHTML = `
     `;
   }
 }
-    
-    }
-
-    const container = showProcessing("gif-result");
-
-    await new Promise(resolve =>
-      setTimeout(resolve, 2500)
-    );
-
-    const url = URL.createObjectURL(file);
-
-    const animation =
-      getAnimationFromPrompt(prompt);
-
-    container.innerHTML = `
-      <div class="flex flex-col items-center gap-4">
-
-        <img
-          src="${url}"
-          class="rounded-2xl max-h-[500px] mx-auto shadow-2xl"
-          style="animation:${animation} 1.4s infinite alternate ease-in-out;"
-        >
-
-        <p class="text-emerald-400 text-lg font-medium">
-          GIF generado correctamente
-        </p>
-
-        <p class="text-slate-400 text-sm italic">
-          Movimiento aplicado: "${prompt}"
-        </p>
-
-      </div>
-    `;
-  }
+</script>
+  <script>
+ 
 </script>
   
 </body>
