@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Beni-IA | Centro de Creación Visual</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+rel="stylesheet">
 
 <style>
 
 body{
     font-family:'Inter',sans-serif;
+    background:#020617;
 }
 
 .glass-panel{
-    background:rgba(255,255,255,.05);
-    backdrop-filter:blur(10px);
-    border:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.03);
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.06);
 }
 
 .loader{
     border-top-color:#8b5cf6;
-    animation:spinner 1s linear infinite;
+    animation:spin 1s linear infinite;
 }
 
-@keyframes spinner{
+@keyframes spin{
     to{
         transform:rotate(360deg);
     }
@@ -36,49 +39,53 @@ body{
 </style>
 </head>
 
-<body class="bg-slate-950 text-white min-h-screen">
+<body class="text-white min-h-screen">
 
 <nav class="p-6 flex justify-between items-center border-b border-slate-800">
 
-<h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+<h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
 BENI-IA
 </h1>
 
-<div class="space-x-4">
-<button onclick="switchTab('image')" class="px-4 py-2 hover:text-blue-400">
+<div class="space-x-8">
+
+<button onclick="switchTab('image')" class="hover:text-blue-400">
 Imágenes
 </button>
 
-<button onclick="switchTab('video')" class="px-4 py-2 hover:text-blue-400">
+<button onclick="switchTab('video')" class="hover:text-blue-400">
 Videos
 </button>
 
-<button onclick="switchTab('gif')" class="px-4 py-2 hover:text-blue-400">
+<button onclick="switchTab('gif')" class="hover:text-blue-400">
 GIFs
 </button>
+
 </div>
 
 </nav>
 
-<main class="max-w-4xl mx-auto p-6">
+
+
+<main class="max-w-4xl mx-auto p-8 space-y-8">
 
 <!-- IMÁGENES -->
-<section id="image-tab" class="space-y-6">
+<section id="image-tab" class="space-y-8">
 
-<div class="glass-panel p-8 rounded-2xl">
+<div class="glass-panel p-8 rounded-3xl">
 
-<h2 class="text-2xl font-semibold mb-4">
+<h2 class="text-3xl font-semibold mb-5">
 Generador de Imágenes
 </h2>
 
 <textarea
 id="img-prompt"
-class="w-full h-32 p-4 bg-slate-900 rounded-lg border border-slate-700"
+class="w-full h-36 p-5 bg-slate-900 rounded-xl border border-slate-700"
 placeholder="Describe la imagen que deseas crear..."></textarea>
 
 <button
 onclick="generateImage()"
-class="mt-4 w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-lg font-bold">
+class="mt-5 w-full bg-purple-600 hover:bg-purple-700 py-4 rounded-xl font-bold">
 Generar Imagen
 </button>
 
@@ -86,7 +93,7 @@ Generar Imagen
 
 <div
 id="image-result"
-class="glass-panel rounded-2xl hidden min-h-[320px] p-6">
+class="glass-panel rounded-3xl hidden min-h-[320px] p-6">
 </div>
 
 </section>
@@ -94,11 +101,11 @@ class="glass-panel rounded-2xl hidden min-h-[320px] p-6">
 
 
 <!-- VIDEO -->
-<section id="video-tab" class="hidden space-y-6">
+<section id="video-tab" class="hidden space-y-8">
 
-<div class="glass-panel p-8 rounded-2xl">
+<div class="glass-panel p-8 rounded-3xl">
 
-<h2 class="text-2xl font-semibold mb-4">
+<h2 class="text-3xl font-semibold mb-5">
 Transformación a Video
 </h2>
 
@@ -106,17 +113,17 @@ Transformación a Video
 type="file"
 id="video-upload"
 accept="image/*"
-class="w-full p-4 bg-slate-900 rounded-lg mb-4">
+class="w-full p-4 bg-slate-900 rounded-xl mb-5">
 
 <input
 type="text"
 id="video-prompt"
-class="w-full p-4 bg-slate-900 rounded-lg border border-slate-700 mb-4"
+class="w-full p-4 bg-slate-900 rounded-xl border border-slate-700 mb-5"
 placeholder="¿Qué acción debe realizar el video?">
 
 <button
 onclick="processVideo()"
-class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-bold">
+class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-bold">
 Crear Video
 </button>
 
@@ -124,7 +131,7 @@ Crear Video
 
 <div
 id="video-result"
-class="glass-panel rounded-2xl hidden min-h-[320px] p-6">
+class="glass-panel rounded-3xl hidden min-h-[320px] p-6">
 </div>
 
 </section>
@@ -132,11 +139,11 @@ class="glass-panel rounded-2xl hidden min-h-[320px] p-6">
 
 
 <!-- GIF -->
-<section id="gif-tab" class="hidden space-y-6">
+<section id="gif-tab" class="hidden space-y-8">
 
-<div class="glass-panel p-8 rounded-2xl">
+<div class="glass-panel p-8 rounded-3xl">
 
-<h2 class="text-2xl font-semibold mb-4">
+<h2 class="text-3xl font-semibold mb-5">
 Creador de GIFs
 </h2>
 
@@ -144,16 +151,16 @@ Creador de GIFs
 type="file"
 id="gif-upload"
 accept="image/*"
-class="w-full p-4 bg-slate-900 rounded-lg mb-4">
+class="w-full p-4 bg-slate-900 rounded-xl mb-5">
 
 <textarea
 id="gif-prompt"
-class="w-full h-24 p-4 bg-slate-900 rounded-lg border border-slate-700 mb-4"
-placeholder="Describe el movimiento del GIF..."></textarea>
+class="w-full h-28 p-5 bg-slate-900 rounded-xl border border-slate-700 mb-5"
+placeholder="Describe el movimiento o efecto para el GIF..."></textarea>
 
 <button
 onclick="processGif()"
-class="w-full bg-emerald-600 hover:bg-emerald-700 py-3 rounded-lg font-bold">
+class="w-full bg-emerald-600 hover:bg-emerald-700 py-4 rounded-xl font-bold">
 Crear GIF
 </button>
 
@@ -161,12 +168,13 @@ Crear GIF
 
 <div
 id="gif-result"
-class="glass-panel rounded-2xl hidden min-h-[320px] p-6">
+class="glass-panel rounded-3xl hidden min-h-[320px] p-6">
 </div>
 
 </section>
 
 </main>
+
 
 
 <script>
@@ -194,6 +202,7 @@ const container=document.getElementById(containerId);
 container.classList.remove("hidden");
 
 container.innerHTML=`
+
 <div class="flex flex-col items-center justify-center min-h-[280px] gap-5">
 
 <div class="loader w-12 h-12 border-4 border-slate-700 rounded-full"></div>
@@ -207,6 +216,7 @@ La IA está generando tu contenido
 </p>
 
 </div>
+
 `;
 
 return container;
@@ -227,14 +237,18 @@ const container=showProcessing("image-result");
 
 try{
 
-await new Promise(resolve=>setTimeout(resolve,3000));
+await new Promise(resolve=>setTimeout(resolve,2500));
 
 container.innerHTML=`
+
 <div class="flex justify-center">
+
 <img
-src="https://picsum.photos/1280/720"
-class="rounded-xl max-w-full shadow-xl">
+src="https://picsum.photos/1280/720?random=${Date.now()}"
+class="rounded-2xl max-w-full shadow-xl">
+
 </div>
+
 `;
 
 }catch(error){
@@ -255,35 +269,45 @@ Error al generar la imagen
 
 async function processVideo(){
 
+const fileInput=document.getElementById("video-upload");
+
 const prompt=document.getElementById("video-prompt").value.trim();
 
-if(!prompt) return;
+if(!fileInput.files.length || !prompt){
+return;
+}
+
+const file=fileInput.files[0];
 
 const container=showProcessing("video-result");
 
 try{
 
-await new Promise(resolve=>setTimeout(resolve,3500));
+await new Promise(resolve=>setTimeout(resolve,3000));
+
+const fileURL=URL.createObjectURL(file);
 
 container.innerHTML=`
-<video
-controls
-autoplay
-loop
-class="rounded-xl w-full">
 
-<source
-src="https://www.w3schools.com/html/mov_bbb.mp4"
-type="video/mp4">
+<div class="flex flex-col items-center gap-5">
 
-</video>
+<img
+src="${fileURL}"
+class="rounded-2xl max-w-full max-h-[500px] object-contain shadow-xl">
+
+<p class="text-blue-400 font-semibold">
+Vista previa del video generada correctamente
+</p>
+
+</div>
+
 `;
 
 }catch(error){
 
 container.innerHTML=`
 <p class="text-red-400">
-Error al generar el video
+Error al crear el video
 </p>
 `;
 
@@ -297,9 +321,15 @@ Error al generar el video
 
 async function processGif(){
 
+const fileInput=document.getElementById("gif-upload");
+
 const prompt=document.getElementById("gif-prompt").value.trim();
 
-if(!prompt) return;
+if(!fileInput.files.length || !prompt){
+return;
+}
+
+const file=fileInput.files[0];
 
 const container=showProcessing("gif-result");
 
@@ -307,20 +337,29 @@ try{
 
 await new Promise(resolve=>setTimeout(resolve,2500));
 
+const fileURL=URL.createObjectURL(file);
+
 container.innerHTML=`
-<div class="flex justify-center">
+
+<div class="flex flex-col items-center gap-5">
+
 <img
-src="https://media.giphy.com/media/ICOgUNjpvO0PC/giphy.gif"
-class="rounded-xl max-w-full shadow-xl"
-alt="GIF generado">
+src="${fileURL}"
+class="rounded-2xl max-w-full max-h-[500px] object-contain shadow-xl">
+
+<p class="text-emerald-400 font-semibold">
+GIF generado correctamente
+</p>
+
 </div>
+
 `;
 
 }catch(error){
 
 container.innerHTML=`
 <p class="text-red-400">
-Error al generar el GIF
+Error al crear el GIF
 </p>
 `;
 
