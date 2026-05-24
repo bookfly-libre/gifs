@@ -119,6 +119,10 @@
   </main>
 
 <script>
+
+  const REPLICATE_API_TOKEN =
+  prompt("Pega tu Replicate API token");
+  
   function switchTab(tab) {
     document.querySelectorAll("main section").forEach(section => {
       section.classList.add("hidden");
@@ -246,16 +250,172 @@
     `;
   }
 
-  async function processGif() {
-    const file =
-      document.getElementById("gif-upload").files[0];
+async function processGif() {
+  const file =
+    document.getElementById("gif-upload").files[0];
 
-    const prompt =
-      document.getElementById("gif-prompt").value.trim();
+  const prompt =
+    document.getElementById("gif-prompt").value.trim();
 
-    if (!file || !prompt) {
-      alert("Selecciona una imagen y describe el movimiento.");
-      return;
+  if (!file || !prompt) {
+    alert("Selecciona imagen y escribe el movimiento.");
+    return;
+  }
+
+  const container =
+    showProcessing("gif-result");
+
+  try {
+    const formData = new FormData();
+
+formData.append("file", file);
+
+const uploadResponse =
+  await fetch(
+    "https://api.replicate.com/v1/files",
+    {
+      method: "POST",
+
+      headers: {
+        Authorization:
+          `Token ${REPLICATE_API_TOKEN}`
+      },
+
+      body: formData
+    }
+  );
+
+const uploadData =
+  await uploadResponse.json();
+
+    const predictionResponse =
+      await fetch(
+        "https://api.replicate.com/v1/predictions",
+        {
+          method: "POST",
+
+          headers: {
+            Authorization: `Token ${REPLICATE_API_TOKEN}`,
+
+            "Content-Type":"application/json"
+          },
+
+          body: JSON.stringify({
+            version:"minimax/video-01-live",
+
+            input: {
+              prompt: prompt,
+              image: uploadData.urls.get
+            }
+          })
+        }
+      );
+
+  
+    const prediction =
+      await predictionResponse.json();
+
+    let resultUrl = null;
+
+    while (!resultUrl) {
+
+      await new Promise(resolve =>
+        setTimeout(resolve, 3000)
+      );
+
+     const poll = await fetch(
+        `https://api.replicate.com/v1/predictions/${prediction.id}`,
+    {
+      headers: {
+      Authorization: `Token ${REPLICATE_API_TOKEN}`
+    }
+  }
+);
+
+      const data = await poll.json();
+
+      if (data.status === "succeeded") {
+      resultUrl = data.output?.[0];
+      }
+
+if (data.status === "failed") {
+  throw new Error("Falló la generación");
+}
+}
+
+container.innerHTML = `
+  <video
+    autoplay
+    loop
+    muted
+    controls
+    class="rounded-2xl mx-auto max-h-[600px]"
+  >
+    <source src="${resultUrl}" type="video/mp4">
+  </video>
+
+  <p class="text-emerald-400 text-center mt-4">
+    GIF generado correctamente
+  </p>
+`;
+
+} catch (error) {
+
+console.error(error);
+
+container.innerHTML = `
+  <p class="text-red-400 text-center">
+    Error al generar el GIF
+  </p>
+`;
+}
+}
+
+      const data =
+        await poll.json();
+
+      if (
+        data.status === "succeeded"
+      ) {
+        resultUrl =
+          data.output?.[0];
+      }
+
+      if (
+        data.status === "failed"
+      ) {
+        throw new Error(
+          "Falló la generación"
+        );
+      }
+    }
+
+    container.innerHTML = `
+      <video
+        autoplay
+        loop
+        muted
+        controls
+        class="rounded-2xl mx-auto max-h-[600px]"
+      >
+        <source src="${resultUrl}" type="video/mp4">
+      </video>
+    `;
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    container.innerHTML = `
+      <p class="text-red-400 text-center">
+        Error al generar el GIF
+      </p>
+    `;
+  }
+}
+    
     }
 
     const container = showProcessing("gif-result");
